@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG.GG - 상자 시뮬레이션</title>
+    <style>
+        /* [1. 공통 스타일: 기존 LOG.GG 디자인 유지] */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary-navy: #475569;
+            --accent-blue: #3b82f6;
+            --bg-soft: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-width: 1440px;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-soft);
+            width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--primary-navy);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+        }
+
+        .header-left {
+            color: #ecf0f5;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .user-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 14px;
+            color: #ecf0f5;
+        }
+
+        .btn-logout {
+            padding: 8px 18px;
+            background: var(--bg-soft);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr var(--sidebar-width);
+            gap: 30px;
+            padding: 40px;
+        }
+
+        /* [2. 사이드바: 요청하신 게시판 카테고리 유지] */
+        .side-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+        }
+
+        .side-card h3 {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .side-card h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .menu-item {
+            font-weight: 700;
+            color: var(--primary-navy);
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .sub-item {
+            padding: 8px 0 8px 20px;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .sub-item.active {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        /* [3. 시뮬레이션 영역 스타일] */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary-navy);
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+        }
+
+        .sim-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-screen {
+            width: 100%;
+            height: 250px;
+            background: #ffffff;
+            border: 2px solid #f1f5f9;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-navy);
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pull {
+            padding: 12px 30px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-pull:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: none;
+            border: 1px solid #e2e8f0;
+            color: #94a3b8;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .stats-panel {
+            background: #f1f5f9;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .stats-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-navy);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .grade-s {
+            color: #f59e0b;
+        }
+
+        .grade-a {
+            color: #8b5cf6;
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="dropdown" id="mainMenu">
+            <div class="header-left">☰ 리그 오브 레전드 ▾</div>
+            <div class="dropdown-content">
+                <a href="../오버워치/오버워치메인페이지.html">오버워치</a>
+                <a href="../배틀그라운드/배그메인페이지.html">배틀그라운드</a>
+                <a href="../메인페이지.html" style="border-top: 1px solid #eee;">메인페이지</a>
+            </div>
+        </div>
+        <div class="user-nav">
+            <span>마이페이지</span>
+            <span><b>USER01</b> 님</span>
+            <button class="btn-logout">로그아웃</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="side-left">
+            <div class="side-card">
+                <h3>카테고리</h3>
+                <div class="menu-item">갤러리</div>
+                <div class="menu-item">게시판</div>
+                <div class="sub-item active">자유 게시판</div>
+                <div class="sub-item">공략 게시판</div>
+                <div class="menu-item">1:1 문의</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="logo">상자 시뮬레이터</div>
+
+            <div class="sim-container">
+                <div id="display" class="result-screen">준비 완료!</div>
+
+                <div class="control-panel">
+                    <div class="button-group">
+                        <button class="btn-pull" onclick="gacha(1)">1회 뽑기</button>
+                        <button class="btn-pull" onclick="gacha(10)">10회 뽑기</button>
+                    </div>
+                    <button class="btn-reset" onclick="resetStats()">초기화</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stats-title">뽑기 결과 / 뽑기 횟수 : <span id="total">0</span>번</div>
+                    <div class="stat-row grade-s"><span>S 등급 (2%)</span> <span id="s-count">0</span></div>
+                    <div class="stat-row grade-a"><span>A 등급 (13%)</span> <span id="a-count">0</span></div>
+                    <div class="stat-row"><span>B 등급 (85%)</span> <span id="b-count">0</span></div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-right"
+            style="background: #cbd5e1; border-radius: 20px; padding: 25px; height: fit-content;">
+            <h3 style="font-size: 16px; margin: 0 0 20px 0; font-weight: 800;">최신 소식</h3>
+            <div style="font-size: 14px; color: #475569; line-height: 1.8;">
+                본 시뮬레이션은 재미를 위해 제작되었습니다. 실제 게임의 확률과 다를 수 있습니다.
+            </div>
+        </aside>
+    </div>
+
+    <footer>© 2026 LOG.GG 배틀그라운드 서비스. 모든 권리 보유.</footer>
+
+    <script>
+        // 시뮬레이션 데이터 관리
+        let data = { total: 0, s: 0, a: 0, b: 0 };
+
+        function gacha(count) {
+            let lastItem = "";
+            for (let i = 0; i < count; i++) {
+                data.total++;
+                let rand = Math.random() * 100;
+
+                if (rand < 2) {
+                    data.s++;
+                    lastItem = "✨ S등급 획득! ✨";
+                } else if (rand < 15) {
+                    data.a++;
+                    lastItem = "💎 A등급 획득";
+                } else {
+                    data.b++;
+                    lastItem = "📦 B등급 획득";
+                }
+            }
+
+            const display = document.getElementById('display');
+            if (count === 1) {
+                display.innerText = lastItem;
+                display.style.color = lastItem.includes("S등급") ? "#f59e0b" : "#475569";
+            } else {
+                display.innerText = "10회 연속 뽑기 완료!";
+                display.style.color = "#475569";
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('total').innerText = data.total;
+            document.getElementById('s-count').innerText = data.s;
+            document.getElementById('a-count').innerText = data.a;
+            document.getElementById('b-count').innerText = data.b;
+        }
+
+        function resetStats() {
+            data = { total: 0, s: 0, a: 0, b: 0 };
+            document.getElementById('display').innerText = "초기화되었습니다.";
+            updateUI();
+        }
+
+        /* 2. 드롭다운 메뉴 제어 기능 */
+        const mainMenu = document.getElementById('mainMenu');
+
+        // 메뉴 영역 클릭 시 열기/닫기 토글
+        mainMenu.addEventListener('click', function (e) {
+            this.classList.toggle('show');
+            e.stopPropagation(); // 이벤트 전파 방지 (body 클릭 이벤트 간섭 차단)
+        });
+
+        // 메뉴 영역 밖 클릭 시 메뉴 닫기
+        window.addEventListener('click', function () {
+            if (mainMenu.classList.contains('show')) {
+                mainMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

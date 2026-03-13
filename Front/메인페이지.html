@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG.GG - 메인</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary-navy: #475569;
+            --accent-blue: #3b82f6;
+            --bg-soft: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-width: 1440px;
+            --sidebar-width: 280px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-soft);
+            color: #212529;
+            width: var(--container-width);
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* 공통 헤더 */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--primary-navy);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+        }
+
+        /* [수정] 드롭다운 컨테이너 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #ecf0f5;
+            padding: 10px 0;
+        }
+
+        /* [추가] 실제 드롭다운 메뉴 스타일 */
+        .dropdown-content {
+            display: none; /* 평소에는 숨김 */
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 1;
+            margin-top: 5px;
+        }
+
+        .dropdown-content a {
+            color: #334155;
+            padding: 12px 16px;
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f5f9;
+            color: var(--accent-blue);
+        }
+
+        /* 클릭 시 메뉴 보이기 (JS로 제어) */
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+
+        .user-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 14px;
+            color: #ecf0f5;
+        }
+
+        .user-nav span {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-nav span:hover {
+            color: var(--accent-blue);
+        }
+
+        .btn-logout {
+            padding: 8px 18px;
+            background: var(--bg-soft);
+            color: #212529;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* 메인 레이아웃 */
+        .main-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr var(--sidebar-width);
+            gap: 30px;
+            padding: 40px;
+            min-height: 800px;
+        }
+
+        /* 사이드바 공통 */
+        .side-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+        }
+
+        .side-card h3 {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .side-card h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .list-item {
+            font-size: 14px;
+            padding: 12px 0;
+            color: #475569;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            color: var(--accent-blue);
+            padding-left: 8px;
+            font-weight: 600;
+        }
+
+        /* 상자 시뮬레이터 버튼 */
+        .side-right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-simulator-small {
+            margin-top: auto; 
+            margin-bottom: 20px;
+            background: white;
+            color: var(--primary-navy);
+            padding: 12px 15px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: var(--transition);
+            cursor: pointer;
+            width: fit-content;
+            align-self: flex-end;
+        }
+
+        .btn-simulator-small:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+            transform: translateY(-3px);
+        }
+
+        /* 중앙 컨텐츠 영역 */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--primary-navy);
+            letter-spacing: -2px;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 12px 20px;
+            width: 380px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--accent-blue);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            color: var(--primary-navy);
+        }
+
+        /* 게임 카드 */
+        .game-cards {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            flex: 1;
+            height: 260px;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card::after {
+            content: attr(data-title);
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        /* 게시판 섹션 */
+        .board-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .tab-menu {
+            display: flex;
+            background: #f4f4f4;
+            padding: 5px 12px 0 12px;
+            gap: 8px;
+        }
+
+        .tab-item {
+            padding: 14px 24px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            color: #94a3b8;
+            border-radius: 14px 14px 0 0;
+            transition: var(--transition);
+        }
+
+        .tab-item.active {
+            background: white;
+            color: var(--accent-blue);
+        }
+
+        .tab-content {
+            padding: 10px 30px 30px 30px;
+        }
+
+        .board-row {
+            display: flex;
+            padding: 18px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 15px;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .board-row.header-row {
+            font-weight: 700;
+            color: #94a3b8;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .board-row:not(.header-row):hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        .col-likes {
+            width: 80px;
+            text-align: center;
+            color: var(--accent-blue);
+            font-weight: 800;
+        }
+
+        .col-title {
+            flex: 1;
+            padding: 0 20px;
+            font-weight: 600;
+        }
+
+        .col-author {
+            width: 120px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .col-date {
+            width: 100px;
+            text-align: right;
+            color: #94a3b8;
+        }
+
+        footer {
+            padding: 60px 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="dropdown" id="mainMenu">
+            <div class="header-left">☰ 메인페이지 ▾</div>
+            <div class="dropdown-content">
+                <a href="./롤/롤메인페이지.html">리그 오브 레전드</a>
+                <a href="./오버워치/오버워치메인페이지.html">오버워치</a>
+                <a href="./배틀그라운드/배그메인페이지.html">배틀그라운드</a>
+            </div>
+        </div>
+
+        <div class="user-nav">
+            <span>마이페이지</span>
+            <span>환경설정</span>
+            <span><b>USER01</b> 님</span>
+            <button class="btn-logout">로그아웃</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="side-left">
+            <div class="side-card">
+                <h3>패치 노트</h3>
+                <div class="list-item">2026.03.05 [오버워치]</div>
+                <div class="list-item">2026.02.05 [배틀그라운드]</div>
+                <div class="list-item">2026.01.15 [롤]</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="top-row">
+                <a href="../메인페이지.html"><div class="logo">LOG.GG</div></a>
+                <div class="search-bar">
+                    <input type="text" placeholder="관심 있는 글을 검색해보세요.">
+                    <span>🔍</span>
+                </div>
+            </div>
+
+            <div class="game-cards">
+                <div class="card" data-title="LEGAGUE OF LEGENDS"><a href="./롤/롤메인페이지.html"><img src="../UI설계보고서/이미지/롤.webp" alt="LOL"></a></div>
+                <div class="card" data-title="OVERWATCH"><a href="./오버워치/오버워치메인페이지.html"><img src="../UI설계보고서/이미지/오버워치.webp" alt="OW"></a></div>
+                <div class="card" data-title="BATTLEGROUNDS"><a href="./배틀그라운드/배그메인페이지.html"><img src="../UI설계보고서/이미지/배그.jpg" alt="PUBG"></a></div>
+            </div>
+
+            <div class="board-card">
+                <div class="tab-menu">
+                    <div class="tab-item active">인기 게시글</div>
+                    <a href="./롤/롤메인페이지.html"><div class="tab-item">리그 오브 레전드</div></a>
+                    <a href="./오버워치/오버워치메인페이지.html"><div class="tab-item">오버워치</div></a>
+                    <a href="./배틀그라운드/배그메인페이지.html"><div class="tab-item">배틀그라운드</div></a>
+                </div>
+                <div class="tab-content">
+                    <div class="board-row header-row">
+                        <div class="col-likes">공감</div>
+                        <div class="col-title">제목</div>
+                        <div class="col-author">작성자</div>
+                        <div class="col-date">날짜</div>
+                    </div>
+                    <div class="board-row">
+                        <div class="col-likes">150</div>
+                        <div class="col-title">LOG.GG 커뮤니티 이용 규칙 필독 가이드</div>
+                        <div class="col-author">관리자</div>
+                        <div class="col-date">03.01</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="side-right">
+            <div class="side-card">
+                <h3>공지사항</h3>
+                <div class="list-item">공개 테스트 서버 안내</div>
+                <div class="list-item">웹사이트 업데이트 내역</div>
+            </div>
+
+            <a href="./상자시뮬/상자시뮬.html" class="btn-simulator-small">
+                <span>🎁 상자 시뮬레이터</span>
+            </a>
+        </aside>
+    </div>
+
+    <footer>© 2026 LOG.GG 커뮤니티 플랫폼. 모든 권리 보유.</footer>
+
+    <script>
+        /* 1. 탭 클릭 이벤트 (기존 코드 유지) */
+        const tabs = document.querySelectorAll('.tab-item');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        /* 2. [추가] 헤더 드롭다운 메뉴 제어 */
+        const mainMenu = document.getElementById('mainMenu');
+        
+        // 클릭하면 열기/닫기
+        mainMenu.addEventListener('click', (e) => {
+            mainMenu.classList.toggle('show');
+            e.stopPropagation(); // 클릭 이벤트가 바디로 퍼지는 것을 방지
+        });
+
+        // 메뉴 바깥쪽 클릭하면 닫기
+        window.addEventListener('click', () => {
+            if (mainMenu.classList.contains('show')) {
+                mainMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

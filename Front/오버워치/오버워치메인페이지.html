@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG.GG - 오버워치</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary-navy: #475569;
+            --accent-blue: #3b82f6;
+            --bg-soft: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-width: 1440px;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-soft);
+            color: #212529;
+            width: var(--container-width);
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* 공통 헤더 */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--primary-navy);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+        }
+
+        /* 1. 드롭다운 전체 박스 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* 2. 숨겨진 메뉴 목록 */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 1;
+            margin-top: 12px;
+        }
+
+        /* 3. 메뉴 내부 링크 스타일 */
+        .dropdown-content a {
+            color: #334155;
+            padding: 12px 16px;
+            display: block;
+            font-size: 14px;
+        }
+
+        /* 4. 마우스 오버 시 색상 변경 */
+        .dropdown-content a:hover {
+            background-color: #f1f5f9;
+            color: var(--accent-blue);
+        }
+
+        /* 5. 메뉴 열림 상태 (JS로 show 클래스 제어) */
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #ecf0f5;
+            padding: 10px 0;
+        }
+
+        .user-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 14px;
+            color: #ecf0f5;
+        }
+
+        .user-nav span {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-nav span:hover {
+            color: var(--accent-blue);
+        }
+
+        .btn-logout {
+            padding: 8px 18px;
+            background: var(--bg-soft);
+            color: #212529;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* 메인 레이아웃 */
+        .main-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr var(--sidebar-width);
+            gap: 30px;
+            padding: 40px;
+            min-height: 800px;
+        }
+
+        .side-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+        }
+
+        .side-card h3 {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .side-card h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .sidebar-right {
+            background: #cbd5e1;
+            border-radius: 20px;
+            padding: 25px;
+            height: fit-content;
+            min-height: 400px;
+        }
+
+        .sidebar-right h3 {
+            font-size: 16px;
+            margin: 0 0 20px 0;
+            font-weight: 800;
+        }
+
+        .menu-item {
+            font-weight: 700;
+            color: var(--primary-navy);
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .sub-item {
+            padding: 8px 0 8px 20px;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sub-item:hover {
+            color: var(--accent-blue);
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--primary-navy);
+            letter-spacing: -2px;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 12px 20px;
+            width: 380px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--accent-blue);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            color: var(--primary-navy);
+        }
+
+        .board-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .tab-menu {
+            display: flex;
+            background: #f4f4f4;
+            padding: 5px 12px 0 12px;
+            gap: 8px;
+        }
+
+        .tab-item {
+            padding: 14px 24px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            color: #94a3b8;
+            border-radius: 14px 14px 0 0;
+            transition: var(--transition);
+        }
+
+        .tab-item.active {
+            background: white;
+            color: var(--accent-blue);
+        }
+
+        .tab-content {
+            padding: 10px 30px 30px 30px;
+        }
+
+        .board-row {
+            display: flex;
+            padding: 18px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 15px;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .board-row.header-row {
+            font-weight: 700;
+            color: var(--accent-blue);
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .board-row:not(.header-row):hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        .col-likes {
+            width: 80px;
+            text-align: center;
+            color: var(--accent-blue);
+            font-weight: 800;
+        }
+
+        .col-title {
+            flex: 1;
+            padding: 0 20px;
+            font-weight: 600;
+        }
+
+        .col-author {
+            width: 120px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .col-date {
+            width: 100px;
+            text-align: right;
+            color: #94a3b8;
+        }
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-box h4 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-navy);
+        }
+
+        .thumb-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .thumb {
+            width: 120px;
+            height: 120px;
+            background: #e2e8f0;
+            border-radius: 12px;
+        }
+
+        footer {
+            padding: 60px 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="dropdown" id="mainMenu">
+            <div class="header-left">☰ 오버워치 ▾</div>
+            <div class="dropdown-content">
+                <a href="./배틀그라운드/배그메인페이지.html">배틀그라운드</a>
+                <a href="./롤/롤메인페이지.html">리그 오브 레전드</a>
+                <a href="../메인페이지.html" style="border-top: 1px solid #eee;">메인페이지</a>
+            </div>
+        </div>
+        
+        <div class="user-nav">
+            <span>마이페이지</span>
+            <span>개인정보 수정</span>
+            <span><b>USER01</b> 님</span>
+            <button class="btn-logout">로그아웃</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="side-left">
+            <div class="side-card">
+                <h3>카테고리</h3>
+                <div class="menu-item">갤러리</div>
+                <div class="menu-item">게시판</div>
+                <div class="sub-item">자유 게시판</div>
+                <div class="sub-item">공략 게시판</div>
+                <div class="menu-item">미디어</div>
+                <div class="menu-item">1:1 문의</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="top-row">
+                <a href="../메인페이지.html">
+                    <div class="logo">LOG.GG</div>
+                </a>
+                <div class="search-bar">
+                    <input type="text" placeholder="글 검색">
+                    <span>🔍</span>
+                </div>
+            </div>
+
+            <div class="board-card">
+                <div class="tab-menu">
+                    <div class="tab-item active">실시간 인기글</div>
+                    <a href="./오버워치영웅정보.html">
+                        <div class="tab-item">영웅 정보</div>
+                    </a>
+                    <a href="../상자시뮬/상자시뮬.html">
+                        <div class="tab-item">상자 시뮬레이터</div>
+                    </a>
+                </div>
+                <div class="tab-content">
+                    <div class="board-row header-row">
+                        <div class="col-likes">공감</div>
+                        <div class="col-title">제목</div>
+                        <div class="col-author">작성자</div>
+                        <div class="col-date">날짜</div>
+                    </div>
+                    <div class="board-row">
+                        <div class="col-likes">150</div>
+                        <div class="col-title">오버워치 인게임 최근 소식 및 패치노트 안내</div>
+                        <div class="col-author">관리자</div>
+                        <div class="col-date">03.01</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-grid">
+                <div class="grid-box">
+                    <h4>갤러리</h4>
+                    <div class="thumb-container">
+                        <div class="thumb"></div>
+                        <div class="thumb"></div>
+                    </div>
+                </div>
+                <div class="grid-box">
+                    <h4>인게임 소식</h4>
+                    <div class="thumb-container">
+                        <div class="thumb"></div>
+                        <div class="thumb"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-right">
+            <h3>오버워치 인게임 최근 소식</h3>
+            <div style="font-size: 14px; color: #475569; line-height: 1.8;">
+                최신 업데이트 내용을 확인하세요.
+            </div>
+        </aside>
+    </div>
+
+    <footer>© 2026 LOG.GG 오버워치 서비스. 모든 권리 보유.</footer>
+
+    <script>
+        /* 1. 탭 메뉴 전환 기능 */
+        const tabs = document.querySelectorAll('.tab-item');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        /* 2. 드롭다운 메뉴 제어 기능 */
+        const mainMenu = document.getElementById('mainMenu');
+        
+        // 메뉴 영역 클릭 시 열기/닫기 토글
+        mainMenu.addEventListener('click', function(e) {
+            this.classList.toggle('show');
+            e.stopPropagation(); // 이벤트 전파 방지 (body 클릭 이벤트 간섭 차단)
+        });
+
+        // 메뉴 영역 밖 클릭 시 메뉴 닫기
+        window.addEventListener('click', function() {
+            if (mainMenu.classList.contains('show')) {
+                mainMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

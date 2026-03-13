@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG.GG - 룬 완벽 가이드</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary-navy: #475569;
+            --accent-blue: #3b82f6;
+            --bg-soft: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --container-width: 1440px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background: var(--bg-soft);
+            width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        /* 헤더 스타일 통일 */
+        header {
+            background: var(--primary-navy);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            height: 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 14px;
+            color: #ecf0f5;
+        }
+
+        .btn-logout {
+            padding: 8px 18px;
+            background: var(--bg-soft);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 30px;
+            padding: 40px;
+            min-height: 800px;
+        }
+
+        /* 좌측 사이드바 스타일 (아이템 페이지 스타일 적용) */
+        .side-card {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+        }
+
+        .side-card h3 {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .side-card h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .menu-item {
+            font-weight: 700;
+            color: var(--primary-navy);
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .sub-item {
+            padding: 8px 0 8px 20px;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sub-item:hover {
+            color: var(--accent-blue);
+        }
+
+        .sub-item.active {
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        /* 룬 컨테이너 및 중앙 로고 */
+        .logo {
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--primary-navy);
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .rune-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .rune-visual-section {
+            flex: 1.3;
+            background: #0a0a0c;
+            border-radius: 16px;
+            padding: 25px;
+            color: white;
+        }
+
+        .path-selector {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .path-icon {
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            opacity: 0.3;
+            filter: grayscale(1);
+            transition: 0.3s;
+        }
+
+        .path-icon.active {
+            opacity: 1;
+            filter: grayscale(0);
+            transform: scale(1.1);
+        }
+
+        .rune-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        .rune-col h5 {
+            font-size: 13px;
+            color: #d4af37;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+        }
+
+        .rune-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .slot {
+            width: 42px;
+            height: 42px;
+            border: 2px solid #444;
+            border-radius: 50%;
+            background: #111;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .slot img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .slot.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+            background: #222;
+        }
+
+        .slot.keystone {
+            width: 55px;
+            height: 55px;
+        }
+
+        .secondary-path-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .sub-path-icon {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            opacity: 0.4;
+        }
+
+        .sub-path-icon.active {
+            opacity: 1;
+            filter: drop-shadow(0 0 5px #3b82f6);
+        }
+
+        .stat-shards {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .shard-slot {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #555;
+            border-radius: 50%;
+            background: #111;
+            cursor: pointer;
+        }
+
+        .shard-slot.active {
+            border-color: #fff;
+            background: #444;
+        }
+
+        .rune-desc-section {
+            flex: 0.7;
+        }
+
+        .desc-box {
+            background: #f1f5f9;
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 6px solid var(--accent-blue);
+            min-height: 200px;
+        }
+
+        #desc-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        #desc-text {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* 우측 사이드바 (아이템 페이지 스타일 적용) */
+        .side-right .side-card {
+            background: #cbd5e1;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 푸터 스타일 통일 */
+        footer {
+            padding: 60px 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">☰ 리그오브레전드▾</div>
+        <div class="user-nav">
+            <span>마이페이지</span>
+            <span><b>USER01</b> 님</span>
+            <button class="btn-logout">로그아웃</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="side-left">
+            <div class="side-card">
+                <h3>카테고리</h3>
+                <div class="menu-item">갤러리</div>
+                <div class="menu-item">커뮤니티</div>
+                <div class="sub-item">자유게시판</div>
+                <div class="sub-item">공략게시판</div>
+                <div class="menu-item">미디어</div>
+                <div class="menu-item">1:1 문의</div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="logo">LOG.GG</div>
+            <div class="rune-container">
+                <div class="rune-visual-section">
+                    <div class="path-selector" id="main-path-selector">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/7201_Precision.png"
+                            class="path-icon active" data-path="Precision">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/7200_Domination.png"
+                            class="path-icon" data-path="Domination">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/7202_Sorcery.png"
+                            class="path-icon" data-path="Sorcery">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/7204_Resolve.png"
+                            class="path-icon" data-path="Resolve">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/7203_Whimsy.png"
+                            class="path-icon" data-path="Inspiration">
+                    </div>
+
+                    <div class="rune-grid">
+                        <div class="rune-col" id="primary-rune-col">
+                            <h5 id="primary-path-name">핵심 빌드: 정밀</h5>
+                            <div id="primary-slots-container"></div>
+                        </div>
+
+                        <div class="rune-col">
+                            <div class="stat-shards">
+                                <h5>능력치 파편</h5>
+                                <div id="stat-shards-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rune-desc-section">
+                    <div id="desc-name">룬을 선택하세요</div>
+                    <div class="desc-box">
+                        <div id="desc-text">룬 아이콘을 클릭하면 상세한 효과와 능력치가 여기에 표시돼.</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="side-right">
+            <div class="side-card">
+                <h3>최근 업데이트</h3>
+                <div style="font-size:13px; color:#475569; padding: 10px;">
+                    룬 시스템 밸런스 패치 노트<br>
+                    신규 룬 '전설: 가속' 추가
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer>© 2026 LOG.GG 롤 서비스. 모든 권리 보유.</footer>
+
+    <script>
+        // 기본 이미지 경로 설정
+        const imgBase = "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/";
+        const shardBase = "https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/";
+
+        const runeData = {
+            Precision: {
+                name: "정밀", color: "#d4af37", img: "7201_Precision.png",
+                keystones: [
+                    { name: "집중 공격", img: "Precision/PressTheAttack/PressTheAttack.png", desc: "적 챔피언에게 평타 3회 시 약점 노출 및 추가 피해." },
+                    { name: "치명적 속도", img: "Precision/LethalTempo/LethalTempoTemp.png", desc: "공격 시 공격 속도 증가 및 사거리 증가." },
+                    { name: "정복자", img: "Precision/Conqueror/Conqueror.png", desc: "공격 시 적응형 능력치 중첩 및 최대 중첩 시 회복." }
+                ],
+                rows: [
+                    [{ name: "과다치유", img: "Precision/Overheal.png", desc: "회복 초과분 보호막" }, { name: "승전보", img: "Precision/Triumph.png", desc: "처치 시 회복+골드" }, { name: "침착", img: "Precision/PresenceOfMind/PresenceOfMind.png", desc: "마나/기력 재생 증가" }],
+                    [{ name: "전설: 민첩함", img: "Precision/LegendAlacrity/LegendAlacrity.png", desc: "공속 증가" }, { name: "전설: 가속", img: "Precision/LegendHaste/LegendHaste.png", desc: "스킬 가속 증가" }, { name: "전설: 핏빛 길", img: "Precision/LegendBloodline/LegendBloodline.png", desc: "생명력 흡수 증가" }],
+                    [{ name: "최후의 일격", img: "Precision/CoupDeGrace/CoupDeGrace.png", desc: "낮은 체력 적 처단" }, { name: "체력차 극복", img: "Precision/CutDown/CutDown.png", desc: "탱커 상대 추가 피해" }, { name: "최후의 저항", img: "Precision/LastStand/LastStand.png", desc: "내 체력 낮을 때 강화" }]
+                ]
+            },
+            Domination: {
+                name: "지배", color: "#e21d24", img: "7200_Domination.png",
+                keystones: [
+                    { name: "감전", img: "Domination/Electrocute/Electrocute.png", desc: "3초 내 3회 공격 시 적응형 피해." },
+                    { name: "어둠의 수확", img: "Domination/DarkHarvest/DarkHarvest.png", desc: "낮은 체력 적 공격 시 영혼 수확 및 피해 강화." },
+                    { name: "칼날비", img: "Domination/HailOfBlades/HailOfBlades.png", desc: "전투 시작 시 첫 3회 공속 대폭 증가." }
+                ],
+                rows: [
+                    [{ name: "비열한 한 방", img: "Domination/CheapShot/CheapShot.png", desc: "이동 방해 적 추가 피해" }, { name: "피의 맛", img: "Domination/TasteOfBlood/GreenTerror_TasteOfBlood.png", desc: "적 공격 시 체력 회복" }, { name: "돌발 일격", img: "Domination/SuddenImpact/SuddenImpact.png", desc: "이동기 사용 후 관통력 증가" }],
+                    [{ name: "좀비 와드", img: "Domination/ZombieWard/ZombieWard.png", desc: "와드 파괴 시 생성" }, { name: "유령 포로", img: "Domination/GhostPoro/GhostPoro.png", desc: "시야 밝히는 포로 생성" }, { name: "사냥의 증표", img: "Domination/EyeballCollection/EyeballCollection.png", desc: "처치 시 적응형 능력치" }],
+                    [{ name: "보물 사냥꾼", img: "Domination/TreasureHunter/TreasureHunter.png", desc: "처치 시 추가 골드" }, { name: "영리한 사냥꾼", img: "Domination/IngeniousHunter/IngeniousHunter.png", desc: "아이템 가속 증가" }, { name: "궁극의 사냥꾼", img: "Domination/UltimateHunter/UltimateHunter.png", desc: "궁극기 쿨감" }]
+                ]
+            },
+            Sorcery: {
+                name: "마법", color: "#6c71ef", img: "7202_Sorcery.png",
+                keystones: [
+                    { name: "콩콩이 소환", img: "Sorcery/SummonAery/SummonAery.png", desc: "공격 시 피해 또는 아군 보호막." },
+                    { name: "신비로운 유성", img: "Sorcery/ArcaneComet/ArcaneComet.png", desc: "스킬 적중 시 해당 위치 유성 투하." },
+                    { name: "난입", img: "Sorcery/PhaseRush/PhaseRush.png", desc: "3회 공격 시 이동 속도 대폭 증가." }
+                ],
+                rows: [
+                    [{ name: "무효화 구체", img: "Sorcery/NullifyingOrb/Pokeshield.png", desc: "마법 보호막 생성" }, { name: "마나순환 팔찌", img: "Sorcery/ManaflowBand/ManaflowBand.png", desc: "최대 마나 증가" }, { name: "빛의 망토", img: "Sorcery/NimbusCloak/6361.png", desc: "스펠 사용 시 이속" }],
+                    [{ name: "깨달음", img: "Sorcery/Transcendence/Transcendence.png", desc: "레벨별 쿨감" }, { name: "절대 집중", img: "Sorcery/AbsoluteFocus/AbsoluteFocus.png", desc: "체력 높을 때 피해 증가" }, { name: "기민함", img: "Sorcery/Celerity/CelerityTemp.png", desc: "이속 효과 강화" }],
+                    [{ name: "주문 작열", img: "Sorcery/Scorch/Scorch.png", desc: "스킬 적중 시 화상" }, { name: "물 위를 걷는 자", img: "Sorcery/Waterwalking/Waterwalking.png", desc: "강에서 전투력 상승" }, { name: "폭풍의 결집", img: "Sorcery/GatheringStorm/GatheringStorm.png", desc: "시간 경과 시 능력치" }]
+                ]
+            },
+            Resolve: {
+                name: "결의", color: "#a1d294", img: "7204_Resolve.png",
+                keystones: [
+                    { name: "착취의 손아귀", img: "Resolve/GraspOfTheUndying/GraspOfTheUndying.png", desc: "4초마다 평타 시 체력 비례 피해+회복." },
+                    { name: "여진", img: "Resolve/VeteranAftershock/VeteranAftershock.png", desc: "CC기 적중 시 방어력 상승 후 폭발 피해." },
+                    { name: "수호자", img: "Resolve/Guardian/Guardian.png", desc: "근처 아군 보호 시 보호막 생성." }
+                ],
+                rows: [
+                    [{ name: "철거", img: "Resolve/Demolish/Demolish.png", desc: "포탑 근처 충전 공격" }, { name: "생명의 샘", img: "Resolve/FontOfLife/FontOfLife.png", desc: "이동 방해 적 공격 시 아군 회복" }, { name: "보호막 강타", img: "Resolve/MirrorShell/MirrorShell.png", desc: "보호막 있을 때 평타 강화" }],
+                    [{ name: "사전 준비", img: "Resolve/Conditioning/Conditioning.png", desc: "12분 후 방/마저 상승" }, { name: "재생의 바람", img: "Resolve/SecondWind/SecondWind.png", desc: "피해 입은 후 회복" }, { name: "뼈 방패", img: "Resolve/BonePlating/BonePlating.png", desc: "연속 피해 감소" }],
+                    [{ name: "과잉성장", img: "Resolve/Overgrowth/Overgrowth.png", desc: "미니언 처치 시 체력 증가" }, { name: "소생", img: "Resolve/Revitalize/Revitalize.png", desc: "회복/보호막 효과 강화" }, { name: "불굴의 의지", img: "Resolve/Unflinching/Unflinching.png", desc: "강인함 및 둔화 저항" }]
+                ]
+            },
+            Inspiration: {
+                name: "영감", color: "#48b4be", img: "7203_Whimsy.png",
+                keystones: [
+                    { name: "빙결 강화", img: "Inspiration/GlacialAugment/GlacialAugment.png", desc: "CC기 시 지면 얼려 둔화 및 피해 감소." },
+                    { name: "선제공격", img: "Inspiration/FirstStrike/FirstStrike.png", desc: "먼저 공격 시 추가 피해 및 골드 획득." },
+                    { name: "봉인 풀린 주문서", img: "Inspiration/UnsealedSpellbook/UnsealedSpellbook.png", desc: "전투 중 소환사 주문 교체 가능." }
+                ],
+                rows: [
+                    [{ name: "마법공학 점멸기", img: "Inspiration/HextechFlashtraption/HextechFlashtraption.png", desc: "점멸 쿨 중 대체기" }, { name: "마법의 신발", img: "Inspiration/MagicalFootwear/MagicalFootwear.png", desc: "12분 공짜 신발" }, { name: "완벽한 타이밍", img: "Inspiration/PerfectTiming/PerfectTiming.png", desc: "공짜 초시계" }],
+                    [{ name: "외상", img: "Inspiration/FuturesMarket/FuturesMarket.png", desc: "아이템 외상 구매" }, { name: "미니언 해체분석기", img: "Inspiration/MinionDematerializer/MinionDematerializer.png", desc: "미니언 즉시 처치" }, { name: "비스킷 배달", img: "Inspiration/MasterKey/MasterKey.png", desc: "체력/마나 회복 템" }],
+                    [{ name: "우주적 통찰력", img: "Inspiration/CosmicInsight/CosmicInsight.png", desc: "스펠/템 가속" }, { name: "쾌속 접근", img: "Inspiration/ApproachVelocity/ApproachVelocity.png", desc: "CC 적에게 이동 시 이속" }, { name: "시간 왜곡 물약", img: "Inspiration/TimeWarpTonic/TimeWarpTonic.png", desc: "물약 즉시 회복" }]
+                ]
+            }
+        };
+
+        const statShards = [
+            [{ name: "적응형 능력치", desc: "+9 능력치", img: "StatModsAdaptiveForceIcon.png" }, { name: "공격 속도", desc: "+10% 공속", img: "StatModsAttackSpeedIcon.png" }, { name: "스킬 가속", desc: "+8 가속", img: "StatModsCDRPercent.png" }],
+            [{ name: "적응형 능력치", desc: "+9 능력치", img: "StatModsAdaptiveForceIcon.png" }, { name: "방어력", desc: "+6 방어", img: "StatModsArmorIcon.png" }, { name: "마법 저항력", desc: "+8 마저", img: "StatModsMagicResIcon.png" }],
+            [{ name: "체력", desc: "+15~140 체력", img: "StatModsHealthPlusIcon.png" }, { name: "방어력", desc: "+6 방어", img: "StatModsArmorIcon.png" }, { name: "마법 저항력", desc: "+8 마저", img: "StatModsMagicResIcon.png" }]
+        ];
+
+        let currentPrimary = "Precision";
+        let currentSecondary = "Inspiration";
+
+        function updateDesc(name, desc) {
+            const nameEl = document.getElementById('desc-name') || document.getElementById('detail-name');
+            const textEl = document.getElementById('desc-text') || document.getElementById('detail-desc');
+            if (nameEl) nameEl.innerText = name;
+            if (textEl) textEl.innerText = desc;
+        }
+
+        function renderPrimary() {
+            const container = document.getElementById('primary-slots-container');
+            if (!container) return;
+            const data = runeData[currentPrimary];
+            container.innerHTML = "";
+
+            const titleEl = document.getElementById('primary-path-name') || document.getElementById('main-title');
+            if (titleEl) titleEl.innerText = `핵심 빌드: ${data.name}`;
+
+            // 핵심 룬
+            const kRow = document.createElement('div'); kRow.className = 'rune-row';
+            data.keystones.forEach((r, i) => {
+                const s = document.createElement('div'); s.className = `slot keystone ${i === 0 ? 'active' : ''}`;
+                s.innerHTML = `<img src="${imgBase}${r.img}">`;
+                s.onclick = () => { select(s); updateDesc(r.name, r.desc); };
+                kRow.appendChild(s);
+            });
+            container.appendChild(kRow);
+
+            // 일반 룬 rows
+            data.rows.forEach(row => {
+                const rDiv = document.createElement('div'); rDiv.className = 'rune-row';
+                row.forEach((r) => {
+                    const s = document.createElement('div'); s.className = `slot`;
+                    s.innerHTML = `<img src="${imgBase}${r.img}">`;
+                    s.onclick = () => { select(s); updateDesc(r.name, r.desc); };
+                    rDiv.appendChild(s);
+                });
+                container.appendChild(rDiv);
+            });
+        }
+
+        function renderSecondary() {
+            const container = document.getElementById('secondary-slots-container');
+            if (!container) return;
+            const data = runeData[currentSecondary];
+            container.innerHTML = "";
+            data.rows.forEach(row => {
+                const rDiv = document.createElement('div'); rDiv.className = 'rune-row';
+                row.forEach((r) => {
+                    const s = document.createElement('div'); s.className = `slot`;
+                    s.innerHTML = `<img src="${imgBase}${r.img}">`;
+                    s.onclick = () => { select(s); updateDesc(r.name, r.desc); };
+                    rDiv.appendChild(s);
+                });
+                container.appendChild(rDiv);
+            });
+        }
+
+        function renderShards() {
+            const container = document.getElementById('stat-shards-container') || document.getElementById('shard-slots');
+            if (!container) return;
+            container.innerHTML = "";
+            statShards.forEach(row => {
+                const rDiv = document.createElement('div'); rDiv.className = 'rune-row';
+                row.forEach((sh) => {
+                    const s = document.createElement('div'); s.className = `shard-slot`;
+                    s.innerHTML = `<img src="${shardBase}${sh.img}" style="width:70%; opacity:0.8;">`;
+                    s.onclick = () => { select(s); updateDesc(sh.name, sh.desc); };
+                    rDiv.appendChild(s);
+                });
+                container.appendChild(rDiv);
+            });
+        }
+
+        function select(el) {
+            el.parentElement.querySelectorAll('.slot, .shard-slot').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // 초기화 실행
+        window.onload = () => {
+            // 메인 경로 아이콘 이벤트 바인딩
+            const pathIcons = document.querySelectorAll('.path-icon') || document.querySelectorAll('.path-btn');
+            pathIcons.forEach(icon => {
+                icon.onclick = () => {
+                    pathIcons.forEach(i => i.classList.remove('active'));
+                    icon.classList.add('active');
+                    currentPrimary = icon.dataset.path || icon.dataset.id;
+                    renderPrimary();
+                    initSecondarySelector();
+                };
+            });
+
+            renderPrimary();
+            initSecondarySelector();
+            renderSecondary();
+            renderShards();
+        };
+
+        function initSecondarySelector() {
+            const nav = document.getElementById('secondary-path-selector') || document.getElementById('sub-path-list');
+            if (!nav) return;
+            nav.innerHTML = "";
+            Object.keys(runeData).forEach(key => {
+                if (key === currentPrimary) return;
+                const img = document.createElement('img');
+                img.src = `${imgBase}${runeData[key].img}`;
+                img.className = `sub-path-icon ${key === currentSecondary ? 'active' : ''}`;
+                img.style.width = "30px"; img.style.cursor = "pointer"; img.style.margin = "0 5px";
+                img.onclick = () => {
+                    nav.querySelectorAll('img').forEach(i => { i.classList.remove('active'); i.style.opacity = "0.4"; });
+                    img.classList.add('active');
+                    img.style.opacity = "1";
+                    currentSecondary = key;
+                    renderSecondary();
+                };
+                nav.appendChild(img);
+            });
+        }
+    </script>
+</body>
+
+</html>
